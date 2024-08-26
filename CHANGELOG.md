@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- ✨(frontend) allow group members filtering #363
+
 ## [1.1.0] - 2024-09-10
 
 ### Added

@@ -16,6 +16,9 @@ test.describe('Team', () => {
       await createTeam(page, 'team-top-box', browserName, 1)
     ).shift();
 
+    await expect(page.getByText('Group members')).toBeVisible();
+    await expect(page.getByLabel('Filter member list')).toBeVisible();
+
     await expect(
       page.getByRole('heading', {
         name: teamName,
