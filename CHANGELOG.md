@@ -31,6 +31,12 @@ and this project adheres to
 
 ### Added
 
+- 🍱 embark dimail-api as container #366
+
+## [1.0.2] - 2024-08-29
+
+### Added
+
 - 🔧Runtime config for the frontend (#345)
 - 🔧(helm) configure resource server in staging
 

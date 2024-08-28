@@ -109,6 +109,7 @@ run: ## start the wsgi (production) and development server
 	@$(COMPOSE) up --force-recreate -d app-dev
 	@$(COMPOSE) up --force-recreate -d celery-dev
 	@$(COMPOSE) up --force-recreate -d keycloak
+	@$(COMPOSE) up --force-recreate -d dimail
 	@echo "Wait for postgresql to be up..."
 	@$(WAIT_KC_DB)
 	@$(WAIT_DB)
@@ -271,6 +272,14 @@ i18n-generate-and-upload: \
   i18n-generate \
   crowdin-upload
 .PHONY: i18n-generate-and-upload
+
+# -- INTEROPERABILTY
+# -- Dimail configuration
+
+dimail-db: # create a super user for dimail API container
+	@echo "$(BOLD)Creating a superuser for dimail API container$(RESET)"
+	$(MANAGE) create_dimail_superuser
+.PHONY: dimail-db
 
 
 # -- Mail generator
