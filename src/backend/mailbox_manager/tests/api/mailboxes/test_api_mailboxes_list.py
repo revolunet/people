@@ -15,7 +15,7 @@ pytestmark = pytest.mark.django_db
 
 def test_api_mailboxes__list_anonymous():
     """Anonymous users should not be allowed to list mailboxes."""
-    mail_domain = factories.MailDomainEnabledFactory()
+    mail_domain = factories.MailDomainEnabledFactory(secret="bGFfcmVnaWU6cGFzc3dvcmQ=")
     factories.MailboxFactory.create_batch(2, domain=mail_domain)
 
     response = APIClient().get(f"/api/v1.0/mail-domains/{mail_domain.slug}/mailboxes/")
