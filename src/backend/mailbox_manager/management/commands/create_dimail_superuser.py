@@ -36,16 +36,25 @@ class Command(BaseCommand):
             timeout=10,
         )
         if response.status_code == status.HTTP_201_CREATED:
-            self.stdout.write(self.style.SUCCESS("SUPER"))
-        elif response.status_code == status.HTTP_403_FORBIDDEN:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    "Succesfully created local dimail container's first admin !"
+                )
+            )
+            return 0
+
+        if response.status_code == status.HTTP_403_FORBIDDEN:
             self.stdout.write(
                 self.style.ERROR(
                     "Could not create first admin user, db already populated."
                 )
             )
-        else:
-            self.stdout.write(
-                self.style.ERROR(
-                    f"An unexpected error occurred: {response.content.decode('utf-8')}"
-                )
+            return 1
+
+        # We should never reach this part of the code.
+        self.stdout.write(
+            self.style.ERROR(
+                f"An unexpected error occurred: {response.content.decode('utf-8')}"
             )
+        )
+        return 1

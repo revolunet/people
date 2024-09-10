@@ -174,4 +174,3 @@ services:
       DIMAIL_JWT_SECRET: fake_jwt_secret
     ports:
       - "8001:8000"
-      

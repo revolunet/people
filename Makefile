@@ -278,7 +278,7 @@ i18n-generate-and-upload: \
 # -- Dimail configuration
 
 dimail-superuser: # create a super user for dimail API container
-	@echo "$(BOLD)Creating a superuser for dimail API container$(RESET)"
+	@echo "$(BOLD)Creating a superuser for local dimail API container$(RESET)"
 	$(MANAGE) create_dimail_superuser
 .PHONY: dimail-superuser
 

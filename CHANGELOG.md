@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- 🍱 embark dimail-api as container by @mjeammet #366
+
 ## [1.1.0] - 2024-09-10
 
 ### Added
@@ -28,12 +32,6 @@ and this project adheres to
 - 🐛(frontend) fix add mail domain form submission #355
 
 ## [1.0.2] - 2024-08-30
-
-### Added
-
-- 🍱 embark dimail-api as container #366
-
-## [1.0.2] - 2024-08-29
 
 ### Added
 
