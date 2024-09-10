@@ -203,22 +203,44 @@ def test_models_mailboxes__create_mailbox_success(mock_info, mock_error):
         factories.MailboxFactory.build(domain=domain)
     ).data
 
-    mailbox = factories.MailboxFactory(
-        local_part=mailbox_data["local_part"], domain=domain
-    )
+    with responses.RequestsMock() as rsps:
+        # Ensure successful response using "responses":
+        rsps.add(
+            rsps.GET,
+            re.compile(r".*/token/"),
+            body='{"access_token": "domain_owner_token"}',
+            status=status.HTTP_200_OK,
+            content_type="application/json",
+        )
+        rsps.add(
+            rsps.POST,
+            re.compile(rf".*/domains/{domain.name}/mailboxes/"),
+            body=str(
+                {
+                    "email": f"{mailbox_data['local_part']}@{domain.name}",
+                    "password": "newpass",
+                    "uuid": "uuid",
+                }
+            ),
+            status=status.HTTP_201_CREATED,
+            content_type="application/json",
+        )
 
-    # Check headers
-    headers = rsps.calls[1].request.headers
-    # assert "Authorization" not in headers
-    assert headers["Content-Type"] == "application/json"
+        mailbox = factories.MailboxFactory(
+            use_mock=False, local_part=mailbox_data["local_part"], domain=domain
+        )
 
-    # Payload sent to mailbox provider
-    payload = json.loads(rsps.calls[1].request.body)
-    assert payload == {
-        "displayName": f"{mailbox.first_name} {mailbox.last_name}",
-        "givenName": mailbox.first_name,
-        "surName": mailbox.last_name,
-    }
+        # Check headers
+        headers = rsps.calls[1].request.headers
+        assert headers["Content-Type"] == "application/json"
+
+        # Payload sent to mailbox provider
+        payload = json.loads(rsps.calls[1].request.body)
+        assert payload == {
+            "displayName": f"{mailbox.first_name} {mailbox.last_name}",
+            "givenName": mailbox.first_name,
+            "surName": mailbox.last_name,
+        }
 
     # Logger
     assert not mock_error.called
