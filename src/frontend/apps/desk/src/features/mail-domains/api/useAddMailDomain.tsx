@@ -46,7 +46,9 @@ export const useAddMailDomain = ({
       onSuccess(data);
     },
     onError: (error) => {
-      onError(error);
+      if (typeof onError === 'function') {
+        onError(error);
+      }
     },
   });
 };
