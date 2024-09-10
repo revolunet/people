@@ -252,13 +252,7 @@ describe('ModalCreateMailbox', () => {
     expect(mockOnSuccess).toHaveBeenCalled();
   });
 
-  it('displays right error message error when mailbox prefix is already used', async () => {
-    // mockCreateMailbox.mockRejectedValueOnce(
-    //   new APIError('Failed to create the mailbox', {
-    //     status: 400,
-    //     cause: ['Mailbox with this Local_part and Domain already exists.'],
-    //   }),
-    // );
+  it('displays right error message when mailbox prefix is already used', async () => {
     fetchMock.mock(`end:mail-domains/${mockMailDomain.slug}/mailboxes/`, {
       status: 400,
       body: {
@@ -292,6 +286,125 @@ describe('ModalCreateMailbox', () => {
     });
 
     expect(inputLocalPart).toHaveFocus();
+  });
+
+  it('displays right error message when DImail api token is invalid', async () => {
+    fetchMock.mock(`end:mail-domains/${mockMailDomain.slug}/mailboxes/`, {
+      status: 400,
+      body: {
+        secret:
+          'Token denied. Please check your MAIL_PROVISIONING_API_CREDENTIALS.',
+      },
+    });
+
+    const user = userEvent.setup();
+
+    renderModalCreateMailbox();
+
+    const {
+      inputFirstName,
+      inputLastName,
+      inputLocalPart,
+      inputEmailAddress,
+      buttonSubmit,
+    } = getFormElements();
+
+    await user.type(inputFirstName, 'John');
+    await user.type(inputLastName, 'Doe');
+    await user.type(inputLocalPart, 'john.doe');
+    await user.type(inputEmailAddress, 'john.doe@mail.com');
+
+    await user.click(buttonSubmit);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          'Your request to create a mailbox cannot be completed due to incorrect settings on our server. ' +
+            'Please contact our support team to resolve the problem: suiteterritoriale@anct.gouv.fr',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    expect(inputFirstName).toHaveFocus();
+  });
+
+  it('displays unhandled error cause', async () => {
+    fetchMock.mock(`end:mail-domains/${mockMailDomain.slug}/mailboxes/`, {
+      status: 400,
+      body: {
+        secret:
+          'Permission denied. Please check your MAIL_PROVISIONING_API_CREDENTIALS.',
+      },
+    });
+
+    const user = userEvent.setup();
+
+    renderModalCreateMailbox();
+
+    const {
+      inputFirstName,
+      inputLastName,
+      inputLocalPart,
+      inputEmailAddress,
+      buttonSubmit,
+    } = getFormElements();
+
+    await user.type(inputFirstName, 'John');
+    await user.type(inputLastName, 'Doe');
+    await user.type(inputLocalPart, 'john.doe');
+    await user.type(inputEmailAddress, 'john.doe@mail.com');
+
+    await user.click(buttonSubmit);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          'Permission denied. Please check your MAIL_PROVISIONING_API_CREDENTIALS.',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    expect(buttonSubmit).toHaveFocus();
+  });
+
+  it('displays right error message when DImail api token is missing', async () => {
+    fetchMock.mock(`end:mail-domains/${mockMailDomain.slug}/mailboxes/`, {
+      status: 400,
+      body: {
+        secret:
+          'Please configure MAIL_PROVISIONING_API_CREDENTIALS before creating any mailbox.',
+      },
+    });
+
+    const user = userEvent.setup();
+
+    renderModalCreateMailbox();
+
+    const {
+      inputFirstName,
+      inputLastName,
+      inputLocalPart,
+      inputEmailAddress,
+      buttonSubmit,
+    } = getFormElements();
+
+    await user.type(inputFirstName, 'John');
+    await user.type(inputLastName, 'Doe');
+    await user.type(inputLocalPart, 'john.doe');
+    await user.type(inputEmailAddress, 'john.doe@mail.com');
+
+    await user.click(buttonSubmit);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          'Your request to create a mailbox cannot be completed due to incorrect settings on our server. ' +
+            'Please contact our support team to resolve the problem: suiteterritoriale@anct.gouv.fr',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    expect(inputFirstName).toHaveFocus();
   });
 
   it('displays right error message error when error 500 is received', async () => {

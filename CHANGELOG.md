@@ -12,6 +12,7 @@ and this project adheres to
 
 - 📈(monitoring) configure sentry monitoring #378
 - 🥅(frontend) improve api error handling #355
+- 🥅(frontend) catch new errors on mailbox creation #392
 
 ### Changed
 

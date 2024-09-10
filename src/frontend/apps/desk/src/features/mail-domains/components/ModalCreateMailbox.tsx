@@ -105,12 +105,12 @@ export const ModalCreateMailbox = ({
           },
           secret: {
             causes: [
-              "Please configure your domain's secret before creating any mailbox.",
-              `Secret not valid for this domain`,
+              'Token denied. Please check your MAIL_PROVISIONING_API_CREDENTIALS.',
+              'Please configure MAIL_PROVISIONING_API_CREDENTIALS before creating any mailbox.',
             ],
             causeShown: t(
-              'The mail domain secret is misconfigured. Please, contact ' +
-                'our support team to solve the issue: suiteterritoriale@anct.gouv.fr',
+              'Your request to create a mailbox cannot be completed due to incorrect settings on our server. ' +
+                'Please contact our support team to resolve the problem: suiteterritoriale@anct.gouv.fr',
             ),
             handleError: () => {
               methods.setFocus('first_name');
