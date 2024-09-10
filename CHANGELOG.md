@@ -14,6 +14,7 @@ and this project adheres to
 
 - 📈(monitoring) configure sentry monitoring #378
 - 🥅(frontend) improve api error handling #355
+- 🥅(frontend) improve add & update group forms error handling #387
 
 ### Changed
 
