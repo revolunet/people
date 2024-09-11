@@ -26,6 +26,7 @@ and this project adheres to
 - 💬(frontend) fix add mail domain text #382
 - 🐛(frontend) fix keyboard navigation #379
 - 🐛(frontend) fix add mail domain form submission #355
+- ♿️(frontend) update left nav panel #396
 
 ## [1.0.2] - 2024-08-30
 

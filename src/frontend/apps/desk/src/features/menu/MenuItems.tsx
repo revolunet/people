@@ -1,8 +1,8 @@
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Box, BoxButton, StyledLink } from '@/components';
+import { Box, BoxButton } from '@/components';
 import { useCunninghamTheme } from '@/cunningham';
 import { SVGComponent } from '@/types/components';
 
@@ -17,6 +17,7 @@ interface MenuItemProps {
 
 const MenuItem = ({ Icon, label, href, alias }: MenuItemProps) => {
   const { t } = useTranslation();
+  const router = useRouter();
   const pathname = usePathname();
   const { colorsTokens } = useCunninghamTheme();
   const parentRef = useRef(null);
@@ -43,53 +44,49 @@ const MenuItem = ({ Icon, label, href, alias }: MenuItemProps) => {
       };
 
   return (
-    <StyledLink
-      href={href}
-      aria-current={isActive && 'page'}
+    <Box
+      $margin="xtiny"
+      $padding="tiny"
+      as="li"
+      $justify="center"
+      $css="transition: all 0.2s ease-in-out;"
+      $background={background}
+      $radius="10px"
       ref={parentRef}
-      onMouseOver={() => setIsTooltipOpen(true)}
-      onMouseLeave={() => setIsTooltipOpen(false)}
-      style={{ display: 'block' }}
-      $css={`
-        &:focus-visible {
-          outline: #fff solid 2px;
-        }`}
     >
-      <Box
-        $margin="xtiny"
-        $padding="tiny"
-        as="li"
-        $justify="center"
+      <BoxButton
+        aria-current={isActive && 'page'}
+        onMouseOver={() => setIsTooltipOpen(true)}
+        onMouseLeave={() => setIsTooltipOpen(false)}
         $css={`
-          & > button { padding: 0};
-          transition: all 0.2s ease-in-out
+          padding: 0;
+          ${isActive ? null : '&:focus-visible {outline: #fff solid 2px;}'}
         `}
-        $background={background}
-        $radius="10px"
+        aria-label={t(`{{label}} button`, { label })}
+        $color={color}
+        as="button"
+        onClick={() => router.push(href)}
       >
-        <BoxButton
-          aria-label={t(`{{label}} button`, { label })}
-          $color={color}
-          as="span"
-        >
-          <Icon
-            width="2.375rem"
-            aria-hidden="true"
-            style={{
-              transition: 'color 0.2s ease-in-out',
-            }}
-          />
-        </BoxButton>
-      </Box>
-      {isTooltipOpen && (
-        <Tooltip
-          parentRef={parentRef}
-          label={label}
-          backgroundColor={backgroundTooltip}
-          textColor={colorTooltip}
+        <Icon
+          width="2.375rem"
+          aria-hidden="true"
+          style={{
+            transition: 'color 0.2s ease-in-out',
+          }}
         />
-      )}
-    </StyledLink>
+      </BoxButton>
+
+      <Box as="span">
+        {isTooltipOpen && (
+          <Tooltip
+            parentRef={parentRef}
+            label={label}
+            backgroundColor={backgroundTooltip}
+            textColor={colorTooltip}
+          />
+        )}
+      </Box>
+    </Box>
   );
 };
 
