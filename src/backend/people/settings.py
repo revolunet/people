@@ -580,6 +580,7 @@ class Test(Base):
 
     CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(True)
 
+    MAIL_PROVISIONING_API_URL = "http://host.docker.internal:8001"
     # this is a dev credentials for mail provisioning API
     MAIL_PROVISIONING_API_CREDENTIALS = "bGFfcmVnaWU6cGFzc3dvcmQ="
 
