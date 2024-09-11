@@ -4,7 +4,7 @@ import {
   parseAPIError,
   parseAPIErrorCause,
   parseServerAPIError,
-} from '../parseAPIErrorV2';
+} from '../parseAPIError';
 
 describe('parseAPIError', () => {
   const handleErrorMock = jest.fn();

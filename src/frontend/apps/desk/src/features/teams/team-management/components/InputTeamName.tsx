@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { APIError } from '@/api';
-import { parseAPIError } from '@/api/parseAPIErrorV2';
+import { parseAPIError } from '@/api/parseAPIError';
 import { Box, TextErrors } from '@/components';
 
 interface InputTeamNameProps {
