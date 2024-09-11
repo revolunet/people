@@ -141,7 +141,10 @@ def test_models_mailboxes__cannot_be_created_for_pending_maildomain():
         factories.MailboxFactory(domain=factories.MailDomainFactory())
 
 
-### SYNC TO DIMAIL-API
+### REACTING TO DIMAIL-API
+### This section is not about testing the dimail container we embark
+### but to make sure our models react correctly to dimail's responses
+### hence the mocks.
 
 
 @override_settings(MAIL_PROVISIONING_API_CREDENTIALS=None)
