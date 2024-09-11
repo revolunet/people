@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { APIError } from '@/api';
-import { parseAPIError } from '@/api/parseAPIError';
+import { parseAPIError } from '@/api/parseAPIErrorV2';
 import { Box, TextErrors } from '@/components';
 
 interface InputTeamNameProps {
@@ -26,49 +26,33 @@ export const InputTeamName = ({
   const { t } = useTranslation();
   const [isInputError, setIsInputError] = useState(isError);
 
-  const getCauses = (error: APIError): string[] => {
-    const handledCauses: string[] = [];
-    const unhandledCauses = parseAPIError({
-      error,
-      errorParams: {
-        slug: {
-          causes: ['Team with this Slug already exists.'],
-          handleError: () => {
-            handledCauses.push(
-              t(
-                'This name is already used for another group. Please enter another one.',
-              ),
-            );
-          },
-        },
-      },
-      serverErrorParams: {
-        defaultMessage: t(
-          'Your request cannot be processed because the server is experiencing an error. If the problem ' +
-            'persists, please contact our support to resolve the issue: suiteterritoriale@anct.gouv.fr',
-        ),
-      },
-    });
-
-    let causes: string[] = [];
-
-    if (handledCauses?.length) {
-      causes = [...handledCauses];
-    }
-    if (unhandledCauses?.length) {
-      causes = [...causes, ...unhandledCauses];
-    }
-
-    return causes;
-  };
-
   useEffect(() => {
     if (isError) {
       setIsInputError(true);
     }
   }, [isError]);
 
-  const causes = error ? getCauses(error) : undefined;
+  const causes = error
+    ? parseAPIError({
+        error,
+        errorParams: [
+          [
+            ['Team with this Slug already exists.'],
+            t(
+              'This name is already used for another group. Please enter another one.',
+            ),
+            undefined,
+          ],
+        ],
+        serverErrorParams: [
+          t(
+            'Your request cannot be processed because the server is experiencing an error. If the problem ' +
+              'persists, please contact our support to resolve the issue: suiteterritoriale@anct.gouv.fr',
+          ),
+          undefined,
+        ],
+      })
+    : undefined;
 
   return (
     <>

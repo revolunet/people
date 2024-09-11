@@ -18,6 +18,23 @@ export type parseAPIErrorParams = {
   errorParams?: ErrorParams;
   serverErrorParams: ServerErrorParams;
 };
+/**
+ * @function
+ * @description created to centralize APIError handling to treat already discovered errors and treat error type 500
+ * with a default behaviour
+ * @param error
+ * @param errorParams
+ * @param serverErrorParams
+ * @todo worth refactor to make it easier to use, like const causes = parseAPIError(
+ *   error,
+ *   [
+ *     [['error1', 'error2'], 'message', callback1],
+ *     [['error3', 'error4'], 'message', callback2],
+ *   ],
+ *   [['default error 500 message'], callbackErrorServer]
+ * )
+ */
+
 export const parseAPIError = ({
   error,
   errorParams,
