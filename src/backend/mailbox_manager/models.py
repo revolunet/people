@@ -2,16 +2,25 @@
 Declare and configure the models for the People additional application : mailbox_manager
 """
 
+import smtplib
+from logging import getLogger
+
 from django.conf import settings
-from django.core import exceptions, validators
-from django.db import models, transaction
+from django.contrib.sites.models import Site
+from django.core import exceptions, mail, validators
+from django.db import models
+from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+from rest_framework import status
 
 from core.models import BaseModel
 
 from mailbox_manager.enums import MailDomainRoleChoices, MailDomainStatusChoices
 from mailbox_manager.utils.dimail import DimailAPIClient
+
+logger = getLogger(__name__)
 
 
 class MailDomain(BaseModel):
@@ -161,10 +170,54 @@ class Mailbox(BaseModel):
         self.full_clean()
 
         if self._state.adding:
-            with transaction.atomic():
-                client = DimailAPIClient()
-                client.send_mailbox_request(self)
-                return super().save(*args, **kwargs)
+            # send new mailbox request to dimail
+            client = DimailAPIClient()
+            response = client.send_mailbox_request(self)
+
+            if response.status_code == status.HTTP_201_CREATED:
+                super().save(*args, **kwargs)
+
+            logger.info("Succesfully created email %s.", response.json()["email"])
+
+            self.send_new_mailbox_notification(
+                recipient=self.secondary_email,
+                mailbox_data={key: response.json()[key] for key in ["email", "password"]}
+            )
 
         # Update is not implemented for now
         raise NotImplementedError()
+
+    def send_new_mailbox_notification(self, recipient, mailbox_data):
+        """
+        Send email to confirm mailbox creation
+        and send new mailbox information.
+        """
+
+        template_vars = {
+            "title": _("Your new mailbox information"),
+            "site": Site.objects.get_current(),
+            "webmail_url": settings.WEBMAIL_URL,
+            "mailbox_data": mailbox_data,
+        }
+
+        msg_html = render_to_string("mail/html/new_mailbox.html", template_vars)
+        msg_plain = render_to_string("mail/text/new_mailbox.txt", template_vars)
+
+        try:
+            mail.send_mail(
+                _("Your new mailbox information"),
+                msg_plain,
+                settings.EMAIL_FROM,
+                [recipient],
+                html_message=msg_html,
+                fail_silently=False,
+            )
+            logger.info(
+                "Mailbox information for %s sent to %s.", mailbox_data.email, recipient
+            )
+        except smtplib.SMTPException as exception:
+            logger.error(
+                "Mailbox confirmation email to %s was not sent: %s",
+                recipient,
+                exception,
+            )

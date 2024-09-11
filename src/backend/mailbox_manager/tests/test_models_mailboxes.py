@@ -141,6 +141,24 @@ def test_models_mailboxes__cannot_be_created_for_pending_maildomain():
         factories.MailboxFactory(domain=factories.MailDomainFactory())
 
 
+def test_models_mailboxes__sends_new_mailbox_notification():
+    """
+    Creating a new mailbox should send confirmation email
+    to secondary email.
+    """
+    access = factories.MailDomainAccessFactory(role=enums.MailDomainRoleChoices.OWNER)
+
+    with mock.patch("django.core.mail.send_mail") as mock_send:
+        mailbox = factories.MailboxFactory(use_mock=True, domain=access.domain)
+
+    mock_send.assert_called_once_with(
+        "Your password for your new email address",
+        "my message",
+        None,
+        mailbox.secondary_email,
+    )
+
+
 ### SYNC TO DIMAIL-API
 
 

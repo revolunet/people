@@ -416,6 +416,11 @@ class Base(Configuration):
     OIDC_TIMEOUT = values.Value(None, environ_name="OIDC_TIMEOUT", environ_prefix=None)
 
     # MAILBOX-PROVISIONING API
+    WEBMAIL_URL = values.Value(
+        default=None,
+        environ_name="WEBMAIL_URL",
+        environ_prefix=None,
+    )
     MAIL_PROVISIONING_API_URL = values.Value(
         default="https://api.dev.ox.numerique.gouv.fr",
         environ_name="MAIL_PROVISIONING_API_URL",

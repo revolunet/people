@@ -83,6 +83,7 @@ class MailboxFactory(factory.django.DjangoModelFactory):
     @classmethod
     def _create(cls, model_class, *args, use_mock=True, **kwargs):
         domain = kwargs["domain"]
+        email = f"{kwargs['local_part']}@{domain.name}"
         if use_mock and isinstance(domain, models.MailDomain):
             with responses.RequestsMock() as rsps:
                 # Ensure successful response using "responses":
@@ -98,13 +99,7 @@ class MailboxFactory(factory.django.DjangoModelFactory):
                     re.compile(
                         rf".*/domains/{domain.name}/mailboxes/{kwargs['local_part']}"
                     ),
-                    body=str(
-                        {
-                            "email": f"{kwargs['local_part']}@{domain.name}",
-                            "password": "newpass",
-                            "uuid": "uuid",
-                        }
-                    ),
+                    body='{"email": "%s", "password": "newpass", "uuid": "uuid"}' % email,
                     status=status.HTTP_201_CREATED,
                     content_type="application/json",
                 )

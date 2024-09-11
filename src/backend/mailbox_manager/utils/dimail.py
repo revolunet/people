@@ -87,15 +87,9 @@ class DimailAPIClient:
             raise error
 
         if response.status_code == status.HTTP_201_CREATED:
-            extra = {"response": response.content.decode("utf-8")}
-            # This a temporary broken solution. Password will soon be sent
-            # from OX servers but their prod is not ready.
-            # In the meantime, we log mailbox info (including password !)
             logger.info(
                 "Mailbox successfully created on domain %s",
-                mailbox.domain.name,
-                extra=extra,
-            )
+                mailbox.domain.name)
             return response
 
         if response.status_code == status.HTTP_403_FORBIDDEN:
