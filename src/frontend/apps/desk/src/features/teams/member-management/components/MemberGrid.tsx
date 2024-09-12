@@ -1,4 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
   DataGrid,
@@ -7,9 +6,7 @@ import {
   usePagination,
 } from '@openfun/cunningham-react';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 
 import { useDebounce } from '@/api';
 import IconUser from '@/assets/icons/icon-user.svg';
@@ -59,30 +56,17 @@ function formatSortModel(
 export const MemberGrid = ({ team, currentRole }: MemberGridProps) => {
   const [isModalMemberOpen, setIsModalMemberOpen] = useState(false);
   const { t } = useTranslation();
+  const [queryValue, setQueryValue] = useState<string>('');
   const { colorsTokens } = useCunninghamTheme();
   const pagination = usePagination({
     pageSize: PAGE_SIZE,
-  });
-
-  const searchMemberValidationSchema = z.object({
-    query: z.string().optional(),
-  });
-
-  const methods = useForm<{ query: string }>({
-    delayError: 0,
-    defaultValues: {
-      query: '',
-    },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    resolver: zodResolver(searchMemberValidationSchema),
   });
 
   const [sortModel, setSortModel] = useState<SortModel>([]);
   const [accesses, setAccesses] = useState<Access[]>([]);
   const { page, pageSize, setPagesCount } = pagination;
 
-  const membersQuery = useDebounce(methods.watch('query'));
+  const membersQuery = useDebounce(queryValue);
   const ordering = sortModel.length ? formatSortModel(sortModel[0]) : undefined;
 
   const { data, isLoading, error } = useTeamAccesses({
@@ -156,7 +140,7 @@ export const MemberGrid = ({ team, currentRole }: MemberGridProps) => {
           <Input
             label={t('Filter member list')}
             rightIcon={<IconMagnifyingGlass />}
-            {...methods.register('query')}
+            onChange={(event) => setQueryValue(event.target.value)}
           />
           {currentRole !== Role.MEMBER && (
             <Button

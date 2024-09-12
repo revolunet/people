@@ -5,7 +5,7 @@ import { useDebounce } from '../useDebounce';
 jest.useFakeTimers();
 
 describe('useDebounce', () => {
-  it('should return the initial value immediately', async () => {
+  it('should return the initial value immediately', () => {
     const { result } = renderHook(() => useDebounce('initial value'));
 
     expect(result.current).toBe('initial value');
