@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
+import { useDebounce } from '@/api';
 import IconUser from '@/assets/icons/icon-user.svg';
 import { Box, Card, Text, TextErrors } from '@/components';
 import { useCunninghamTheme } from '@/cunningham';
@@ -53,23 +54,6 @@ function formatSortModel(
   const { field, sort } = sortModel;
   const orderingField = mapping[field] || field;
   return sort === 'desc' ? `-${orderingField}` : orderingField;
-}
-
-const MS_DEBOUNCE = 500;
-export function useDebounce(value: string, delay: number = MS_DEBOUNCE) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
 }
 
 export const MemberGrid = ({ team, currentRole }: MemberGridProps) => {

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { CreateMailboxParams } from 'app-desk/src/features/mail-domains';
 
 import { createTeam, keyCloakSignIn, randomName } from './common';
 
@@ -56,5 +57,23 @@ test.describe('Team', () => {
 
     await expect(page.getByText('The team has been updated.')).toBeVisible();
     await expect(page.getByText(`Group details`)).toBeVisible();
+
+    page.on('request', (request) => {
+      if (request.url().includes('/teams/?q=') && request.method() === 'POST') {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const payload: Omit<CreateMailboxParams, 'mailDomainId'> =
+          request.postDataJSON();
+
+        if (payload) {
+          isCreateMailboxRequestSentWithExpectedPayload =
+            payload.first_name === 'John' &&
+            payload.last_name === 'Doe' &&
+            payload.local_part === 'john.doe' &&
+            payload.secondary_email === 'john.doe@mail.com';
+        }
+      }
+    });
+
+    await expect();
   });
 });
