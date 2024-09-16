@@ -283,6 +283,14 @@ dimail-superuser: # create a super user for dimail API container
 .PHONY: dimail-superuser
 
 
+# -- INTEROPERABILTY
+# -- Dimail configuration
+
+setup-dimail-db:
+	@echo "$(BOLD)Populating database of local dimail API container$(RESET)"
+	@$(MANAGE) setup_dimail_db
+.PHONY: setup-dimail-db
+
 # -- Mail generator
 
 mails-build: ## Convert mjml files to html and text
