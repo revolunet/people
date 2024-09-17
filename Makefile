@@ -88,7 +88,7 @@ bootstrap: \
 	back-i18n-compile \
 	mails-install \
 	mails-build \
-	dimail-superuser \ 
+	setup-dimail-db \
 	install-front-desk
 .PHONY: bootstrap
 
@@ -273,15 +273,6 @@ i18n-generate-and-upload: \
   i18n-generate \
   crowdin-upload
 .PHONY: i18n-generate-and-upload
-
-# -- INTEROPERABILTY
-# -- Dimail configuration
-
-dimail-superuser: # create a super user for dimail API container
-	@echo "$(BOLD)Creating a superuser for local dimail API container$(RESET)"
-	$(MANAGE) create_dimail_superuser
-.PHONY: dimail-superuser
-
 
 # -- INTEROPERABILTY
 # -- Dimail configuration

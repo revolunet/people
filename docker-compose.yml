@@ -168,7 +168,7 @@ services:
       - kc_postgresql
 
   dimail: 
-    image: registry.mim-libre.fr/dimail/dimail-api:main
+    image: registry.mim-libre.fr/dimail/dimail-api:latest
     environment:
       DIMAIL_MODE: FAKE
       DIMAIL_JWT_SECRET: fake_jwt_secret
